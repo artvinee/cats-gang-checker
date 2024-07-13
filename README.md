@@ -1,2 +1,2 @@
 # cats-gang-checker
-CatsGang checker
+CatsGang checker by artvine.
