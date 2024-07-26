@@ -73,12 +73,36 @@ class Cats:
 
         return [phone_number, name, rewards, age, referral_link, proxy]
 
+    async def do_task(self, task):
+        try:
+            resp = await self.session.post(
+                f"https://cats-backend-production.up.railway.app/tasks/{task}/complete", headers=self.tma)
+            if resp.status == 200:
+                r = await resp.json()
+                if r['success'] is True:
+                    return True
+            else:
+                return False
+        except Exception as e:
+            print(e)
+
+    async def get_tasks(self):
+        try:
+            resp = await self.session.get(f"https://cats-backend-production.up.railway.app/tasks/user", headers=self.tma)
+            if resp.status == 200:
+                r = await resp.json()
+                return r['tasks']
+            else:
+                return False
+        except Exception as e:
+            print(e)
+
     async def user(self):
         try:
             resp = await self.session.get(f'https://cats-backend-production.up.railway.app/user', headers=self.tma)
             if resp.status == 200:
                 r = await resp.json()
-                if r['isUserSubscribed'] is True:
+                if r['telegramAgeReward']:
                     status = True
                     age = r['telegramAge']
                     totalreward = r['totalRewards']

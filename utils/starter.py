@@ -19,6 +19,7 @@ async def start(thread: int, session_name: str, phone_number: str, proxy: [str, 
     if await cat.login():
         logger.success(f"Thread {thread} | {account} | Login")
         await task(cat, thread, account)
+        await cat.logout()
     else:
         logger.error(f"Thread {thread} | {account} | Failed to login")
         await cat.logout()
@@ -49,9 +50,34 @@ async def task(cat, thread, account):
                     continue
                 else:
                     break
-        await cat.logout()
+        tasks = await cat.get_tasks()
+        black = [5]
+
+        for task in tasks:
+            if task['id'] not in black:
+                if task['completed'] is False:
+                    title = task['title']
+                    reward = task['rewardPoints']
+                    if task['type'] == "INVITE_FRIENDS":
+                        if task['progress']['invitedFriends'] >= task['params']['friendsCount']:
+                            do = await cat.do_task(str(task['id']))
+                            count = task['params']['friendsCount']
+                            if do is True:
+                                logger.success(f'Thread {thread} | {account} | Task {title} {count} successfully completed! +{reward} points')
+                                continue
+                            else:
+                                logger.error(f'Thread {thread} | {account} | Task {title} {count} was failed.')
+                    else:
+                        do = await cat.do_task(task['id'])
+                        if do is True:
+                            logger.success(f'Thread {thread} | {account} | Task "{title}" successfully completed! +{reward} points')
+                            continue
+                        else:
+                            logger.error(f'Thread {thread} | {account} | Task "{title}" was failed.')
+            await asyncio.sleep(random.uniform(0.5, 2.2))
     except Exception as e:
         logger.error(f"Thread {thread} | {account} | Error: {e}")
+        await cat.logout()
 
 
 async def stats():

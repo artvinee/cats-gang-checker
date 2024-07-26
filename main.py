@@ -45,6 +45,7 @@ async def main():
                 if not account: break
                 session_name, phone_number, proxy = account.values()
                 tasks.append(asyncio.create_task(start(session_name=session_name, phone_number=phone_number, thread=thread, proxy=proxy)))
+                await asyncio.sleep(random.randint(config.DELAYS['ACCOUNT'][0], config.DELAYS['ACCOUNT'][1]))
         else:
             for thread, account in enumerate(accounts):
                 session_name, phone_number, proxy = account.values()
