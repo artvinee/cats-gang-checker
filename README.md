@@ -1,4 +1,4 @@
-# cats-gang-checker
+# cats-gang-checker (ISN'T WORKING RIGHT NOW)
 CatsGang checker by artvine.
 
 Everything is also compatible with software by https://github.com/Axcent-ape.
